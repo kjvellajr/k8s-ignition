@@ -1,0 +1,55 @@
+{
+  "ignition": {
+    "version": "3.3.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "name": "core",
+        "sshAuthorizedKeys": [
+          "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBJ9oe5NHIAzlFYuGbSPBZ7AqW+AlvChrJW/5E5WrNrsi/tusoWDAsBY0zxN2UwRXh3jp7e9PwIru2HIlnMBdPSGWDvocekc3Z7UD2dNwonGjUVqu/pkonHLTI2FY1jXiNrn9mNBi7QxQOL8IUpzwIbA3TlI5EQznM1Fuupilx596D5JywxdnIxcqPgJrUCABPr9QmXo++zajzu3IrlLj2GUTxcrpuGzdbiHb2TR3s47rkxeBVple7q2SN+lWHN7H5zzn4YO9k06Hpicpg0iPhs1F4ZtIPZ1BfPJUekSuIHLb5YJzwtr5U/2Xz5oZiYavpZ18ExmNtUSp3qP+fH9sJ kjvellajr@localhost.localdomain"
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "overwrite": true,
+        "path": "/etc/dnf/modules.d/cri-o.module",
+        "contents": {
+          "compression": "",
+          "source": "data:,%5Bcri-o%5D%0Aname%3Dcri-o%0Astream%3D1.17%0Aprofiles%3D%0Astate%3Denabled%0A"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/yum.repos.d/kubernetes.repo",
+        "contents": {
+          "compression": "gzip",
+          "source": "data:;base64,H4sIAAAAAAAC/4yNUQrDIBiD3z1FL6BSGN0YeIIdYYxibfgLav3RCvP2ozC6PfYpJORLnr5OyCs2lJdYbYR5HIGYbEHNwSzbxuWuNVvnLaEoF1KdFaVEAcqlqFuNOoNT0b89iXCV79swDheB1U4Bs+kFMbkFzpte7MD454nJo518m5PbVXo0RUyi685zmaP8tg7+EwAA//+EhlgnCQEAAA=="
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/modules-load.d/br_netfilter.conf",
+        "contents": {
+          "compression": "",
+          "source": "data:,br_netfilter"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/sysctl.d/kubernetes.conf",
+        "contents": {
+          "compression": "",
+          "source": "data:,net.bridge.bridge-nf-call-iptables%3D1%0Anet.ipv4.ip_forward%3D1%0A"
+        },
+        "mode": 420
+      }
+    ]
+  }
+}
