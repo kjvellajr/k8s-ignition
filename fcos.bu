@@ -41,6 +41,25 @@ storage:
         inline: |
           net.bridge.bridge-nf-call-iptables=1
           net.ipv4.ip_forward=1
+    # fixing perms for longhorn and SELinux
+    # https://github.com/longhorn/longhorn/issues/4988
+    # https://ioflair.com/blog/fix-longhorn-volumes-stuck-in-attach-detach-loop-on-openshift-okd/
+    - path: /etc/ioflair/support/iscsiadm-fix.cil
+      mode: 420
+      contents:
+        compression: ""
+        source: data:,(allow%20iscsid_t%20self%20(capability%20(dac_override)))%0A
+systemd:
+  units:
+    - contents: |
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/sbin/semodule -i /etc/ioflair/support/iscsiadm-fix.cil
+        RemainAfterExit=yes
+        [Install]
+        WantedBy=multi-user.target
+      enabled: true
+      name: iscsiadm-fix-selinux-policy.service
 passwd: # setting login credentials
   users:
     - name: core
