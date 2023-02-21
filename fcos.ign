@@ -49,6 +49,23 @@
           "source": "data:,net.bridge.bridge-nf-call-iptables%3D1%0Anet.ipv4.ip_forward%3D1%0A"
         },
         "mode": 420
+      },
+      {
+        "path": "/etc/ioflair/support/iscsiadm-fix.cil",
+        "contents": {
+          "compression": "",
+          "source": "data:,(allow%20iscsid_t%20self%20(capability%20(dac_override)))%0A"
+        },
+        "mode": 420
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "contents": "[Service]\nType=oneshot\nExecStart=/usr/sbin/semodule -i /etc/ioflair/support/iscsiadm-fix.cil\nRemainAfterExit=yes\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "iscsiadm-fix-selinux-policy.service"
       }
     ]
   }
