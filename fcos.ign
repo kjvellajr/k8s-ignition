@@ -25,10 +25,10 @@
       },
       {
         "overwrite": true,
-        "path": "/etc/yum.repos.d/kubernetes.repo",
+        "path": "/etc/yum.repos.d/kubernetes128.repo",
         "contents": {
           "compression": "gzip",
-          "source": "data:;base64,H4sIAAAAAAAC/4yNUQrDIBiD3z1FL6BSGN0YeIIdYYxibfgLav3RCvP2ozC6PfYpJORLnr5OyCs2lJdYbYR5HIGYbEHNwSzbxuWuNVvnLaEoF1KdFaVEAcqlqFuNOoNT0b89iXCV79swDheB1U4Bs+kFMbkFzpte7MD454nJo518m5PbVXo0RUyi685zmaP8tg7+EwAA//+EhlgnCQEAAA=="
+          "source": "data:;base64,H4sIAAAAAAAC/5TMOwoCMRRG4T6LyWWshkBW4BLEIo+fjNy8yM2Is3tRwX66w1ecG+8eo2JC7qq6Anv9g/JOsI9stzm7GKLOSTSvoh+NQhswJNP5DEPPRV9WGr2QQv1QtItKPYUNgX/JOE6NBnqLbrpvlKhfJWvGod4BAAD//3ZHsV6yAAAA"
         },
         "mode": 420
       },

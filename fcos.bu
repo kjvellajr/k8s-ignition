@@ -14,19 +14,17 @@ storage:
           profiles=
           state=enabled
     # YUM repository for kubeadm, kubelet and kubectl
-    - path: /etc/yum.repos.d/kubernetes.repo
+    - path: /etc/yum.repos.d/kubernetes128.repo
       mode: 0644
       overwrite: true
       contents:
         inline: |
           [kubernetes]
           name=Kubernetes
-          baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+          baseurl=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/
           enabled=1
           gpgcheck=1
-          repo_gpgcheck=1
-          gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-            https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key
     # configuring automatic loading of br_netfilter on startup
     - path: /etc/modules-load.d/br_netfilter.conf
       mode: 0644
