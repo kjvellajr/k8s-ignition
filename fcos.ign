@@ -43,6 +43,15 @@
       },
       {
         "overwrite": true,
+        "path": "/etc/modules-load.d/ip_tables.conf",
+        "contents": {
+          "compression": "",
+          "source": "data:,ip_tables"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
         "path": "/etc/sysctl.d/kubernetes.conf",
         "contents": {
           "compression": "",

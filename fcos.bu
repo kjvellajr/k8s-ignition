@@ -31,6 +31,13 @@ storage:
       overwrite: true
       contents:
         inline: br_netfilter
+    # configuring automatic loading of ip_tables on startup
+    # this is needed for wg container that use iptables
+    - path: /etc/modules-load.d/ip_tables.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: ip_tables
     # setting kernel parameters required by kubelet
     - path: /etc/sysctl.d/kubernetes.conf
       mode: 0644
