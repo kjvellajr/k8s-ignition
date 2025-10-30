@@ -21,10 +21,10 @@ storage:
         inline: |
           [kubernetes]
           name=Kubernetes
-          baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+          baseurl=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/
           enabled=1
           gpgcheck=1
-          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/repodata/repomd.xml.key
     # configuring automatic loading of br_netfilter on startup
     - path: /etc/modules-load.d/br_netfilter.conf
       mode: 0644
