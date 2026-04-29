@@ -54,6 +54,23 @@ storage:
       contents:
         compression: ""
         source: data:,(allow%20iscsid_t%20self%20(capability%20(dac_override)))%0A
+    # Zincati must keep checking and STAGING updates (rpm-ostree deploy --stage)
+    # but should not reboot — kured is the sole authority for reboot timing.
+    # zincati has no clean "never reboot" mode, so we use a periodic window
+    # placed after kured's window (Sat/Sun 03:00–06:00 UTC) and so narrow it
+    # never fires in practice. The bridge timer + kured handle all reboots.
+    - path: /etc/zincati/config.d/55-strategy.toml
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          [updates]
+          strategy = "periodic"
+
+          [[updates.periodic.window]]
+          days = [ "Monday" ]
+          start_time = "04:00"
+          length_minutes = 1
 systemd:
   units:
     - contents: |
@@ -65,6 +82,43 @@ systemd:
         WantedBy=multi-user.target
       enabled: true
       name: iscsiadm-fix-selinux-policy.service
+    # Reduce iSCSI replacement_timeout from 120s to 30s so that processes blocked
+    # on a dropped Longhorn volume fail fast rather than freezing the node for 2
+    # minutes during shutdown. 30s is still enough to survive transient blips on a
+    # local LAN without triggering false I/O errors during replica rebuilds.
+    - contents: |
+        [Unit]
+        Description=Set iSCSI replacement timeout for faster Longhorn failover
+        ConditionPathExists=/etc/iscsi/iscsid.conf
+        [Service]
+        Type=oneshot
+        ExecStart=/bin/sed -i 's/node.session.timeo.replacement_timeout = .*/node.session.timeo.replacement_timeout = 30/' /etc/iscsi/iscsid.conf
+        RemainAfterExit=yes
+        [Install]
+        WantedBy=multi-user.target
+      enabled: true
+      name: iscsi-timeout-fix.service
+    # Signal Kured to drain and reboot this node when Zincati has staged an OS
+    # update. Zincati stages the update but does not reboot (strategy=periodic
+    # above); this bridge creates /run/reboot-required so that Kured can cordon,
+    # drain all pods (including Longhorn workloads), and then reboot cleanly.
+    - contents: |
+        [Unit]
+        Description=Signal Kured when a staged OS update is ready to reboot
+        [Service]
+        Type=oneshot
+        ExecStart=/bin/bash -c 'rpm-ostree status --json | jq -e ".deployments[] | select(.staged == true)" > /dev/null && touch /run/reboot-required || true'
+      name: zincati-kured-bridge.service
+    - contents: |
+        [Unit]
+        Description=Periodically check for staged OS updates
+        [Timer]
+        OnBootSec=5min
+        OnUnitActiveSec=15min
+        [Install]
+        WantedBy=timers.target
+      enabled: true
+      name: zincati-kured-bridge.timer
 passwd: # setting login credentials
   users:
     - name: core

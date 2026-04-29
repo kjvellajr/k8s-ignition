@@ -66,6 +66,15 @@
           "source": "data:,(allow%20iscsid_t%20self%20(capability%20(dac_override)))%0A"
         },
         "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/zincati/config.d/55-strategy.toml",
+        "contents": {
+          "compression": "",
+          "source": "data:;base64,W3VwZGF0ZXNdCnN0cmF0ZWd5ID0gInBlcmlvZGljIgoKW1t1cGRhdGVzLnBlcmlvZGljLndpbmRvd11dCmRheXMgPSBbICJNb25kYXkiIF0Kc3RhcnRfdGltZSA9ICIwNDowMCIKbGVuZ3RoX21pbnV0ZXMgPSAxCg=="
+        },
+        "mode": 420
       }
     ]
   },
@@ -75,6 +84,20 @@
         "contents": "[Service]\nType=oneshot\nExecStart=/usr/sbin/semodule -i /etc/ioflair/support/iscsiadm-fix.cil\nRemainAfterExit=yes\n[Install]\nWantedBy=multi-user.target\n",
         "enabled": true,
         "name": "iscsiadm-fix-selinux-policy.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Set iSCSI replacement timeout for faster Longhorn failover\nConditionPathExists=/etc/iscsi/iscsid.conf\n[Service]\nType=oneshot\nExecStart=/bin/sed -i 's/node.session.timeo.replacement_timeout = .*/node.session.timeo.replacement_timeout = 30/' /etc/iscsi/iscsid.conf\nRemainAfterExit=yes\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "iscsi-timeout-fix.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Signal Kured when a staged OS update is ready to reboot\n[Service]\nType=oneshot\nExecStart=/bin/bash -c 'rpm-ostree status --json | jq -e \".deployments[] | select(.staged == true)\" \u003e /dev/null \u0026\u0026 touch /run/reboot-required || true'\n",
+        "name": "zincati-kured-bridge.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Periodically check for staged OS updates\n[Timer]\nOnBootSec=5min\nOnUnitActiveSec=15min\n[Install]\nWantedBy=timers.target\n",
+        "enabled": true,
+        "name": "zincati-kured-bridge.timer"
       }
     ]
   }
