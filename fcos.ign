@@ -66,6 +66,33 @@
           "source": "data:,(allow%20iscsid_t%20self%20(capability%20(dac_override)))%0A"
         },
         "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/usr/local/bin/ostree-hold-release.sh",
+        "contents": {
+          "compression": "gzip",
+          "source": "data:;base64,H4sIAAAAAAAC/4yOwUrDQBRF9/MV1xraBBknERRRRpBuu3CvIknmTRsa34szk1IhHy8lG92oi7u855zzM9N0bJo67pSXgA4dI8sjfeCmLO7hRAHP0B4mjGwkpkBkYqq35LSjoZfPd+KEVyyXaALVewXEnmhAeXmtnDCpf92nCXTsEkol3kdKNss367fHzcausQ00QDdSQz/VWPXS7sm9HMvytNUf6KsH4+hgeOx7TNhR7aArTGjHBO3uoH1VnBIZi2xWL37kDKHj5LGaXROcg3j7u7OJtkIk2tssz2coLnBbFGhl5GQrtMIHy5LCyO33RPUVAAD//96Xh86RAQAA"
+        },
+        "mode": 493
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/systemd/system/ostree-finalize-staged-hold.service.d/release-hold.conf",
+        "contents": {
+          "compression": "",
+          "source": "data:,%5BService%5D%0AExecStartPost%3D%2Fusr%2Flocal%2Fbin%2Fostree-hold-release.sh%0A"
+        },
+        "mode": 420
+      },
+      {
+        "overwrite": true,
+        "path": "/etc/zincati/config.d/55-strategy.toml",
+        "contents": {
+          "compression": "",
+          "source": "data:;base64,W3VwZGF0ZXNdCnN0cmF0ZWd5ID0gInBlcmlvZGljIgoKW1t1cGRhdGVzLnBlcmlvZGljLndpbmRvd11dCmRheXMgPSBbICJNb25kYXkiIF0Kc3RhcnRfdGltZSA9ICIwNDowMCIKbGVuZ3RoX21pbnV0ZXMgPSAxCg=="
+        },
+        "mode": 420
       }
     ]
   },
@@ -75,6 +102,20 @@
         "contents": "[Service]\nType=oneshot\nExecStart=/usr/sbin/semodule -i /etc/ioflair/support/iscsiadm-fix.cil\nRemainAfterExit=yes\n[Install]\nWantedBy=multi-user.target\n",
         "enabled": true,
         "name": "iscsiadm-fix-selinux-policy.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Set iSCSI replacement timeout for faster Longhorn failover\nConditionPathExists=/etc/iscsi/iscsid.conf\n[Service]\nType=oneshot\nExecStart=/bin/sed -i 's/node.session.timeo.replacement_timeout = .*/node.session.timeo.replacement_timeout = 30/' /etc/iscsi/iscsid.conf\nRemainAfterExit=yes\n[Install]\nWantedBy=multi-user.target\n",
+        "enabled": true,
+        "name": "iscsi-timeout-fix.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Signal Kured when a staged OS update is ready to reboot\n[Service]\nType=oneshot\nExecStart=/bin/bash -c 'rpm-ostree status --json | jq -e \".deployments[] | select(.staged == true)\" \u003e /dev/null \u0026\u0026 touch /run/reboot-required || true'\n",
+        "name": "zincati-kured-bridge.service"
+      },
+      {
+        "contents": "[Unit]\nDescription=Periodically check for staged OS updates\n[Timer]\nOnBootSec=5min\nOnUnitActiveSec=15min\n[Install]\nWantedBy=timers.target\n",
+        "enabled": true,
+        "name": "zincati-kured-bridge.timer"
       }
     ]
   }
