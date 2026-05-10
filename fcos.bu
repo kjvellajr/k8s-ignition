@@ -46,6 +46,8 @@ storage:
         inline: |
           net.bridge.bridge-nf-call-iptables=1
           net.ipv4.ip_forward=1
+          kernel.softlockup_panic=1
+          kernel.hardlockup_panic=1
     # fixing perms for longhorn and SELinux
     # https://github.com/longhorn/longhorn/issues/4988
     # https://ioflair.com/blog/fix-longhorn-volumes-stuck-in-attach-detach-loop-on-openshift-okd/
@@ -148,6 +150,10 @@ systemd:
         WantedBy=timers.target
       enabled: true
       name: zincati-kured-bridge.timer
+    # fstrim sends DISCARD to all mounted filesystems including Longhorn CSI
+    # volumes, which causes device offline errors and node crashes.
+    - name: fstrim.timer
+      mask: true
 passwd: # setting login credentials
   users:
     - name: core

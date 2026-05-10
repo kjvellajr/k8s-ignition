@@ -55,7 +55,7 @@
         "path": "/etc/sysctl.d/kubernetes.conf",
         "contents": {
           "compression": "",
-          "source": "data:,net.bridge.bridge-nf-call-iptables%3D1%0Anet.ipv4.ip_forward%3D1%0A"
+          "source": "data:,net.bridge.bridge-nf-call-iptables%3D1%0Anet.ipv4.ip_forward%3D1%0Akernel.softlockup_panic%3D1%0Akernel.hardlockup_panic%3D1%0A"
         },
         "mode": 420
       },
@@ -116,6 +116,10 @@
         "contents": "[Unit]\nDescription=Periodically check for staged OS updates\n[Timer]\nOnBootSec=5min\nOnUnitActiveSec=15min\n[Install]\nWantedBy=timers.target\n",
         "enabled": true,
         "name": "zincati-kured-bridge.timer"
+      },
+      {
+        "mask": true,
+        "name": "fstrim.timer"
       }
     ]
   }
