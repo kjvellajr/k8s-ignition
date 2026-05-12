@@ -48,6 +48,13 @@ storage:
           net.ipv4.ip_forward=1
           kernel.softlockup_panic=1
           kernel.hardlockup_panic=1
+    - path: /etc/sysctl.d/inotify.conf
+      mode: 0644
+      overwrite: true
+      contents:
+        inline: |
+          fs.inotify.max_user_instances=8192
+          fs.inotify.max_user_watches=1048576
     # fixing perms for longhorn and SELinux
     # https://github.com/longhorn/longhorn/issues/4988
     # https://ioflair.com/blog/fix-longhorn-volumes-stuck-in-attach-detach-loop-on-openshift-okd/

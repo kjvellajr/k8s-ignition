@@ -60,6 +60,15 @@
         "mode": 420
       },
       {
+        "overwrite": true,
+        "path": "/etc/sysctl.d/inotify.conf",
+        "contents": {
+          "compression": "",
+          "source": "data:,fs.inotify.max_user_instances%3D8192%0Afs.inotify.max_user_watches%3D1048576%0A"
+        },
+        "mode": 420
+      },
+      {
         "path": "/etc/ioflair/support/iscsiadm-fix.cil",
         "contents": {
           "compression": "",
