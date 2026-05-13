@@ -21,10 +21,10 @@ storage:
         inline: |
           [kubernetes]
           name=Kubernetes
-          baseurl=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/
+          baseurl=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/
           enabled=1
           gpgcheck=1
-          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/repodata/repomd.xml.key
+          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/repodata/repomd.xml.key
     # configuring automatic loading of br_netfilter on startup
     - path: /etc/modules-load.d/br_netfilter.conf
       mode: 0644
@@ -68,31 +68,36 @@ storage:
     # zincati has no clean "never reboot" mode, so we use a periodic window
     # placed after kured's window (Sat/Sun 03:00–06:00 UTC) and so narrow it
     # never fires in practice. The bridge timer + kured handle all reboots.
-    # Clear the ostree finalize-staged lock after the hold service creates the file.
-    # The hold service writes locked=true then keeps running; this script patches
-    # it to locked=false so ostree admin finalize-staged proceeds at next shutdown.
-    - path: /usr/local/bin/ostree-hold-release.sh
+    - path: /usr/local/bin/ostree-finalize-bridge.sh
       mode: 0755
       overwrite: true
       contents:
         inline: |
           #!/bin/bash
-          for i in $(seq 60); do
-            [ -f /run/ostree/staged-deployment ] && break
-            sleep 0.5
-          done
-          [ -f /run/ostree/staged-deployment ] || exit 0
-          offset=$(LC_ALL=C grep -boa -Pa 'locked\x00\x00' /run/ostree/staged-deployment 2>/dev/null | head -1 | cut -d: -f1)
-          [ -n "$offset" ] || exit 0
-          printf '\x00' | dd of=/run/ostree/staged-deployment bs=1 seek=$((offset + 8)) count=1 conv=notrunc 2>/dev/null
-    # Drop-in that runs the lock-release script after the hold service starts.
-    - path: /etc/systemd/system/ostree-finalize-staged-hold.service.d/release-hold.conf
-      mode: 0644
-      overwrite: true
-      contents:
-        inline: |
-          [Service]
-          ExecStartPost=/usr/local/bin/ostree-hold-release.sh
+          # Zincati stages updates with finalization LOCKED (it never reboots —
+          # kured does). A locked staged deployment is a no-op for the shutdown
+          # ostree-finalize-staged.service, so kured's reboot would otherwise land
+          # back on the old version. Unlock finalization here so the staged
+          # deployment applies on the next shutdown, then signal kured to reboot.
+          set -euo pipefail
+
+          if rpm-ostree status --json \
+                  | jq -e '.deployments[] | select(.staged == true)' > /dev/null 2>&1; then
+            if ostree admin status | grep -q 'finalization locked'; then
+              ostree admin lock-finalization --unlock
+            fi
+            touch /run/reboot-required
+            exit 0
+          fi
+
+          # Fallback: a finalized-but-not-yet-booted (pending) deployment also
+          # needs a reboot to take effect.
+          if rpm-ostree status --json \
+              | jq -e '.deployments[0] | (.booted == false and .staged == false)' \
+              > /dev/null 2>&1; then
+            touch /run/reboot-required
+          fi
+          exit 0
     - path: /etc/zincati/config.d/55-strategy.toml
       mode: 0644
       overwrite: true
@@ -132,20 +137,19 @@ systemd:
         WantedBy=multi-user.target
       enabled: true
       name: iscsi-timeout-fix.service
-    # Signal Kured to drain and reboot this node when Zincati has staged an OS
-    # update. Zincati stages the update but does not reboot (strategy=periodic
-    # above); this bridge creates /run/reboot-required so that Kured can cordon,
-    # drain all pods (including Longhorn workloads), and then reboot cleanly.
-    # The hold service creates /run/ostree/staged-deployment with locked=true so
-    # ostree-finalize-staged knows what to finalize. But on FCOS with a real /boot
-    # partition the "hold /boot open" behavior is unnecessary. We clear locked=true
-    # immediately via ExecStartPost so finalize-staged can run at the next shutdown.
+    # Zincati stages updates but doesn't reboot; kured is the sole reboot
+    # authority. This bridge runs every 15 min while the node is up. When a
+    # staged deployment is detected it unlocks its finalization lock (via
+    # `ostree admin lock-finalization --unlock`) so the deployment applies on
+    # the next shutdown, then signals kured — so a single kured reboot lands
+    # directly on the new OS. If the unlock fails the timer retries without
+    # triggering a wasted reboot.
     - contents: |
         [Unit]
-        Description=Signal Kured when a staged OS update is ready to reboot
+        Description=Finalize staged OS update and signal Kured to reboot
         [Service]
         Type=oneshot
-        ExecStart=/bin/bash -c 'rpm-ostree status --json | jq -e ".deployments[] | select(.staged == true)" > /dev/null && touch /run/reboot-required || true'
+        ExecStart=/usr/local/bin/ostree-finalize-bridge.sh
       name: zincati-kured-bridge.service
     - contents: |
         [Unit]
