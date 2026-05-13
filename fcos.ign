@@ -78,21 +78,12 @@
       },
       {
         "overwrite": true,
-        "path": "/usr/local/bin/ostree-hold-release.sh",
+        "path": "/usr/local/bin/ostree-finalize-bridge.sh",
         "contents": {
           "compression": "gzip",
-          "source": "data:;base64,H4sIAAAAAAAC/4yOwUrDQBRF9/MV1xraBBknERRRRpBuu3CvIknmTRsa34szk1IhHy8lG92oi7u855zzM9N0bJo67pSXgA4dI8sjfeCmLO7hRAHP0B4mjGwkpkBkYqq35LSjoZfPd+KEVyyXaALVewXEnmhAeXmtnDCpf92nCXTsEkol3kdKNss367fHzcausQ00QDdSQz/VWPXS7sm9HMvytNUf6KsH4+hgeOx7TNhR7aArTGjHBO3uoH1VnBIZi2xWL37kDKHj5LGaXROcg3j7u7OJtkIk2tssz2coLnBbFGhl5GQrtMIHy5LCyO33RPUVAAD//96Xh86RAQAA"
+          "source": "data:;base64,H4sIAAAAAAAC/4ySUWvbMBSF3/UrzrpgJwzFcZ/GhgKjr3nYexqGbF3Vah3Jla5KN/zjR2NvCaXQCvR29N1zdM/nT1XjfNXo1AlnEYejDIkjERJrzglS3qfgcb2tDD1VPvc9bgXmM+L+EZJQrg0Nffh9JM9pf8CIRD21vFwn1ndkoBQ4ZlqV2OIMut4W9XdwR14AzmIPaVHF7KvJQzW9lmc4Dv/1QLA2EavFcnfz68dup25wF2mAbIKG/KlR9qF9IHP7vNm83PId9L9Yl1FHdKQNZI0RbWZI8w3S1quTdA/pcbWYbFzhgKLAEJ1ni3IaOMIYBKs+NrhJqkYielCL5XKi4gu+rlZoQ/asarTBPykfOGbfXvoUgHUCmFenzdF5WOd17/6QnHdwmasowCG33fQlkZoQWEZ6zC6SEQA9O8ZGWCc+3Ii3u7A5rF/YUwWs7hNBe4PXmnNNTpryRHxdlXdcz57/BgAA///G2YtB0gIAAA=="
         },
         "mode": 493
-      },
-      {
-        "overwrite": true,
-        "path": "/etc/systemd/system/ostree-finalize-staged-hold.service.d/release-hold.conf",
-        "contents": {
-          "compression": "",
-          "source": "data:,%5BService%5D%0AExecStartPost%3D%2Fusr%2Flocal%2Fbin%2Fostree-hold-release.sh%0A"
-        },
-        "mode": 420
       },
       {
         "overwrite": true,
@@ -118,7 +109,7 @@
         "name": "iscsi-timeout-fix.service"
       },
       {
-        "contents": "[Unit]\nDescription=Signal Kured when a staged OS update is ready to reboot\n[Service]\nType=oneshot\nExecStart=/bin/bash -c 'rpm-ostree status --json | jq -e \".deployments[] | select(.staged == true)\" \u003e /dev/null \u0026\u0026 touch /run/reboot-required || true'\n",
+        "contents": "[Unit]\nDescription=Finalize staged OS update and signal Kured to reboot\n[Service]\nType=oneshot\nExecStart=/usr/local/bin/ostree-finalize-bridge.sh\n",
         "name": "zincati-kured-bridge.service"
       },
       {
