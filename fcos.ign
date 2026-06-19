@@ -16,19 +16,19 @@
     "files": [
       {
         "overwrite": true,
-        "path": "/etc/dnf/modules.d/cri-o.module",
+        "path": "/etc/yum.repos.d/kubernetes.repo",
         "contents": {
-          "compression": "",
-          "source": "data:,%5Bcri-o%5D%0Aname%3Dcri-o%0Astream%3D1.17%0Aprofiles%3D%0Astate%3Denabled%0A"
+          "compression": "gzip",
+          "source": "data:;base64,H4sIAAAAAAAC/5TMOwoCMRRG4T6LyWXQQgJZgUsQizx+MnLzIjcjzu5FBfvpDl9xbrx5jIoJuavqCuz1D8o7wTayXefsYog6J9F8Ef1oFNqAIZnOZxh6Lvp0ptELKdQPRbuo1FNYEfiXjP3QaKC36Kb7Ron6VbJm7OodAAD//x8ErPCyAAAA"
         },
         "mode": 420
       },
       {
         "overwrite": true,
-        "path": "/etc/yum.repos.d/kubernetes.repo",
+        "path": "/etc/yum.repos.d/cri-o.repo",
         "contents": {
           "compression": "gzip",
-          "source": "data:;base64,H4sIAAAAAAAC/5TMOwoCMRRG4T6LyWXQQgJZgUsQizx+MnLzIjcjzu5FBfvpDl9xbrx5jIoJuavqCuz1D8o7wTayXefsYog6J9F8Ef1oFNqAIZnOZxh6Lvp0ptELKdQPRbuo1FNYEfiXjP3QaKC36Kb7Ron6VbJm7OodAAD//x8ErPCyAAAA"
+          "source": "data:;base64,H4sIAAAAAAAC/6zNParDMBAE4F53sRbzXiVwlSpVIG1IsbYWW+hnxa7sxLcPdq6Q7mMYZh6ThI6fpmCm4XK/djczotIqaVhaq+oAPL9KYvSWKxVdlSzLDEKVNTSWQApBNwfnkgNtOCZysPX27x+kZjBUjsgPvZnrPC00xS8j7b97OaoeG57I3r5zspF28wkAAP//+6g6auIAAAA="
         },
         "mode": 420
       },
