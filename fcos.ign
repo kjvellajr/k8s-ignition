@@ -19,7 +19,7 @@
         "path": "/etc/yum.repos.d/kubernetes.repo",
         "contents": {
           "compression": "gzip",
-          "source": "data:;base64,H4sIAAAAAAAC/5TMOwoCMRRG4T6LyWXQQgJZgUsQizx+MnLzIjcjzu5FBfvpDl9xbrx5jIoJuavqCuz1D8o7wTayXefsYog6J9F8Ef1oFNqAIZnOZxh6Lvp0ptELKdQPRbuo1FNYEfiXjP3QaKC36Kb7Ron6VbJm7OodAAD//x8ErPCyAAAA"
+          "source": "data:;base64,H4sIAAAAAAAC/5TMOwoCMRRG4T6LyWUQQQJZgUsQizx+MnLzIjcjzu5FBfvpDl9xbrx5jIoJuavqCuz1D8o7wTayXefsYog6J9F8Ef1oFNqAIZnOZxh6Lvp0ptELKdQPRbuo1FNYEfiXjP3QaKC36Kb7Ron6VbJm7OodAAD//9wyF8SyAAAA"
         },
         "mode": 420
       },
@@ -28,7 +28,7 @@
         "path": "/etc/yum.repos.d/cri-o.repo",
         "contents": {
           "compression": "gzip",
-          "source": "data:;base64,H4sIAAAAAAAC/6zNParDMBAE4F53sRbzXiVwlSpVIG1IsbYWW+hnxa7sxLcPdq6Q7mMYZh6ThI6fpmCm4XK/djczotIqaVhaq+oAPL9KYvSWKxVdlSzLDEKVNTSWQApBNwfnkgNtOCZysPX27x+kZjBUjsgPvZnrPC00xS8j7b97OaoeG57I3r5zspF28wkAAP//+6g6auIAAAA="
+          "source": "data:;base64,H4sIAAAAAAAC/6zNParDMBAE4F53sRbzeI3AVapUgbQhxdpabKGfFbuyE98+2LlCuo9hmHlMEjp+moKZhsv92t3MiEqrpGFpraoD8PwqidFbrlR0VbIsMwhV1tBYAikE3RycSw604ZjIwdbbv3+QmsFQOSI/9Gau87TQFL+MtP/u5ah6bHgie/vOyUbazScAAP//4zE/K+IAAAA="
         },
         "mode": 420
       },

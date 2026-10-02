@@ -10,16 +10,16 @@ storage:
         inline: |
           [kubernetes]
           name=Kubernetes
-          baseurl=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/
+          baseurl=https://pkgs.k8s.io/core:/stable:/v1.35/rpm/
           enabled=1
           gpgcheck=1
-          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/repodata/repomd.xml.key
-    # YUM repository for CRI-O — keep the minor (v1.34) in lockstep with
+          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.35/rpm/repodata/repomd.xml.key
+    # YUM repository for CRI-O — keep the minor (v1.35) in lockstep with
     # kubernetes.repo above; bump BOTH together on a cluster minor upgrade.
     # cri-o packaging lives on the openSUSE Build Service (the old
     # pkgs.k8s.io/addons cri-o paths are deprecated and 403). Maintained stable
     # minors track Kubernetes (v1.34, v1.35, ...). Fedora's base cri-o (1.32) is
-    # also present, so rpm-ostree resolves to the higher OBS version (1.34.x) on
+    # also present, so rpm-ostree resolves to the higher OBS version (1.35.x) on
     # the next re-layer. See github.com/cri-o/packaging.
     - path: /etc/yum.repos.d/cri-o.repo
       mode: 0644
@@ -28,10 +28,10 @@ storage:
         inline: |
           [cri-o]
           name=CRI-O
-          baseurl=https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v1.34/rpm/
+          baseurl=https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v1.35/rpm/
           enabled=1
           gpgcheck=1
-          gpgkey=https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v1.34/rpm/repodata/repomd.xml.key
+          gpgkey=https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v1.35/rpm/repodata/repomd.xml.key
     # configuring automatic loading of br_netfilter on startup
     - path: /etc/modules-load.d/br_netfilter.conf
       mode: 0644
